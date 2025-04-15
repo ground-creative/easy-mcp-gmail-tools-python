@@ -149,7 +149,7 @@ Google oAuth page
 ![Google oAuth page](screenshots/2.png)
 
 Google permission scopes page
-![Google psermission scopes page](screenshots3.png)
+![Google permission scopes page](screenshots3.png)
 
 User authenticated page
 ![User Aunthenticated page](screenshots/4.png)
