@@ -41,6 +41,10 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 APP_HOST=http://localhost:8000
 DB_PATH=storage/sqlite_credentials.db
 CYPHER=Your Encryption Key Here
+
+# Optional
+SITE_URL=Full application site URL
+SITE_NAME=Application Name
 ```
 
 5. Add `client_secrets.json` in storage folder
@@ -82,7 +86,7 @@ The following tools are provided by this MCP server:
 | Delete Label              | Deletes a Gmail label with confirmation token logic.                                | label_id (str), confirmation_token (Optional[str])                                                                                                        |
 | Get Labels                | Retrieves a list of Gmail labels.                                                   | None                                                                                                                                                      |
 | Get Thread Conversation   | Retrieves the full conversation of a thread by ID.                                  | thread_id (str), format (Optional[str] — 'minimal' or 'full', default: 'minimal')                                                                         |
-|  |
+|                           |
 
 \* Make sure you have granted the appropriate scopes for the application to perform the operations.
 
