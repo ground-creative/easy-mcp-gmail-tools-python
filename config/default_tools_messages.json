@@ -4,7 +4,7 @@
         "request-start": "Archiving {{ params.message_ids }} Gmail message(s) with ID(s): {{ params.message_ids }}."
       },
       "gmail_create_draft_tool": {
-        "request-start": "Creating draft email to `{{ params.to }}` with subject `{{ params.subject }}` ({{ 'HTML' if params.is_html else 'plain text' }} content){% if params.cc %}, CC: {{ params.cc }}{% endif %}{% if params.bcc %}, BCC: {{ params.bcc }}{% endif %}."
+        "request-start": "Creating draft email{% if params.to %} to `{{ params.to }}`{% endif %} with subject `{{ params.subject }}` ({{ 'HTML' if params.is_html else 'plain text' }} content){% if params.cc %}, CC: {{ params.cc }}{% endif %}{% if params.bcc %}, BCC: {{ params.bcc }}{% endif %}."
       },
       "gmail_create_label_tool": {
         "request-start": "Creating a new Gmail label named `{{ params.label_name }}`."
