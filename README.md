@@ -58,12 +58,17 @@ The following tools are provided by this MCP server:
 
 ## Tools and Specifications
 
-| Tool Name          | Description                                                                         | Parameters Required                                                                                          |
-| ------------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Create Draft       | Composes and saves an email to the user's draft folder in Gmail.                    | to (str), subject (str), body (str), cc (Optional [str]), bcc (Optional [str]), is_html (Optional [bool])    |
-| Create Draft Reply | Composes and saves a reply to an existing email message in the user's draft folder. | message_id (str), body (str), to (Optional [str]), cc (Optional [str]), bcc (Optional [str]), is_html (bool) |
+| Tool Name          | Description                                                                         | Parameters Required                                                                                                                                        |
+| ------------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Create Draft       | Composes and saves an email to the user's draft folder in Gmail.                    | to (str), subject (str), body (str), cc (Optional [str]), bcc (Optional [str]), is_html (Optional [bool])                                                  |
+| Create Draft Reply | Composes and saves a reply to an existing email message in the user's draft folder. | message_id (str), body (str), to (Optional [str]), cc (Optional [str]), bcc (Optional [str]), is_html (bool)                                               |
+| Delete Draft       | Deletes a specified Gmail draft with confirmation logic.                            | draft_id (str), confirmation_token (Optional [str])                                                                                                        |
+| Get Draft Details  | Retrieves details of a specific draft by its ID.                                    | draft_id (str), prefer_html (Optional [bool])                                                                                                              |
+| Get Drafts         | Lists all drafts in the user's Gmail account with optional filters and pagination.  | query (Optional [str]), label (Optional [str]), max_results (Optional [int]), page_token (Optional [str])                                                  |
+| Modify Draft       | Updates the body, subject, and recipients of an existing draft.                     | draft_id (str), to (Optional [str]), subject (Optional [str]), body (Optional [str]), cc (Optional [str]), bcc (Optional [str]), is_html (Optional [bool]) |
+| Send Draft         | Sends an existing draft email using Gmail API.                                      |
 
-\* Make sure you have granted the appropriate scopes for the application to perform the operations on the drive.
+\* Make sure you have granted the appropriate scopes for the application to perform the operations.
 
 ## How to Create a Google OAuth 2.0 Client ID
 
