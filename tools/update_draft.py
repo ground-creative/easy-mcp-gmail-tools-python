@@ -17,20 +17,12 @@ from email.mime.text import MIMEText
 @doc_name("Update draft")
 def gmail_update_draft_tool(
     draft_id: Annotated[str, Field(description="ID of the draft to modify.")],
-    to: Annotated[
-        Optional[str], Field(description="Recipient's email address.")
-    ] = None,
-    subject: Annotated[
-        Optional[str], Field(description="Subject of the email.")
-    ] = None,
-    body: Annotated[
-        Optional[str], Field(description="Body content of the email.")
-    ] = None,
+    to: Annotated[Optional[str], Field(description="Recipient's email address.")] = None,
+    subject: Annotated[Optional[str], Field(description="Subject of the email.")] = None,
+    body: Annotated[Optional[str], Field(description="Body content of the email.")] = None,
     cc: Annotated[Optional[str], Field(description="CC recipients (optional).")] = "",
     bcc: Annotated[Optional[str], Field(description="BCC recipients (optional).")] = "",
-    is_html: Annotated[
-        Optional[bool], Field(description="If the body content is HTML.")
-    ] = False,
+    is_html: Annotated[Optional[bool], Field(description="If the body content is HTML.")] = False,
 ) -> dict:
     """
     Modify an existing draft by updating the body, subject, and recipients.
@@ -64,9 +56,13 @@ def gmail_update_draft_tool(
 
         for part in payload.get("parts", []):
             if part.get("mimeType") == "text/plain":
+<<<<<<< Updated upstream
                 original_body = base64.urlsafe_b64decode(part["body"]["data"]).decode(
                     "utf-8"
                 )
+=======
+                original_body = base64.urlsafe_b64decode(part["body"]["data"]).decode("utf-8")
+>>>>>>> Stashed changes
                 break
 
         # Use existing values if not provided
@@ -90,6 +86,7 @@ def gmail_update_draft_tool(
         raw = base64.urlsafe_b64encode(msg.as_bytes()).decode("utf-8")
 
         # Send updated raw message
+<<<<<<< Updated upstream
         updated_draft = (
             service.users()
             .drafts()
@@ -100,6 +97,13 @@ def gmail_update_draft_tool(
             )
             .execute()
         )
+=======
+        updated_draft = service.users().drafts().update(
+            userId="me",
+            id=draft_id,
+            body={"message": {"raw": raw}},
+        ).execute()
+>>>>>>> Stashed changes
 
         return {
             "status": "success",
@@ -110,19 +114,27 @@ def gmail_update_draft_tool(
     except HttpError as error:
         logger.error(f"Google API error occurred: {error._get_reason()}")
         logger.error(f"Error details: {error.resp}")
+<<<<<<< Updated upstream
         logger.error(
             f"Error content: {error.content.decode() if hasattr(error.content, 'decode') else str(error.content)}"
         )
+=======
+        logger.error(f"Error content: {error.content.decode() if hasattr(error.content, 'decode') else str(error.content)}")
+>>>>>>> Stashed changes
         return {
             "status": "error",
             "error": {
                 "message": error._get_reason(),
                 "details": error.resp,
+<<<<<<< Updated upstream
                 "content": (
                     error.content.decode()
                     if hasattr(error.content, "decode")
                     else str(error.content)
                 ),
+=======
+                "content": error.content.decode() if hasattr(error.content, "decode") else str(error.content),
+>>>>>>> Stashed changes
             },
         }
 

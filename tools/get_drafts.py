@@ -3,14 +3,14 @@ from googleapiclient.errors import HttpError
 from typing import Optional, Dict
 from pydantic import Field
 from typing_extensions import Annotated
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from app.middleware.google.GoogleAuthMiddleware import check_access
 from core.utils.tools import doc_tag, doc_name
 from core.utils.logger import logger
 from core.utils.state import global_state
 from core.utils.env import EnvConfig
 import html
-
+import base64
+import email
 
 @doc_tag("Drafts")
 @doc_name("Get drafts")
@@ -88,7 +88,7 @@ def gmail_get_drafts_tool(
                 "error": f"Gmail permission scope not available, please add this scope here: {EnvConfig.get('APP_HOST')}/auth/login",
             }
 
-        # Construct the combined query string
+        # Build the Gmail search query
         filters = []
         if label:
             filters.append(f"label:{label}")
@@ -96,7 +96,7 @@ def gmail_get_drafts_tool(
             filters.append(query)
         query_string = " ".join(filters) if filters else None
 
-        # Fetch drafts list
+        # List drafts
         drafts = (
             service.users()
             .drafts()
@@ -118,61 +118,37 @@ def gmail_get_drafts_tool(
 
         drafts_data = drafts["drafts"]
 
-        # Function to fetch details for each draft
-        def _fetch_draft_details(draft):
+        # Fetch detailed info for each draft sequentially
+        detailed_drafts = []
+        for draft in drafts_data:
             try:
                 draft_id = draft["id"]
-                # Fetch draft message details
                 draft_msg = (
                     service.users()
                     .drafts()
-                    .get(
-                        userId="me",
-                        id=draft_id,
-                    )
+                    .get(userId="me", id=draft_id, format="raw")
                     .execute()
                 )
 
-                message = draft_msg.get("message", {})
-                headers = message.get("payload", {}).get("headers", [])
-                draft_details = {header["name"]: header["value"] for header in headers}
+                raw_data = draft_msg.get("message", {}).get("raw")
+                if not raw_data:
+                    continue
 
-                # Define a helper function to get and clean header values
-                def get_header_value(name: str):
-                    value = draft_details.get(name, None)
-                    return html.unescape(value) if value is not None else ""
+                msg_bytes = base64.urlsafe_b64decode(raw_data.encode("ASCII"))
+                mime_msg = email.message_from_bytes(msg_bytes)
 
-                # Build the return dictionary for draft details
-                return {
+                detailed_drafts.append({
                     "id": draft_id,
-                    "subject": get_header_value("Subject"),
-                    "from": get_header_value("From"),
-                    "to": get_header_value("To"),
-                    "date": get_header_value("Date"),
-                    "snippet": html.unescape(message.get("snippet", "")),
-                }
+                    "subject": mime_msg.get("Subject", ""),
+                    "from": mime_msg.get("From", ""),
+                    "to": mime_msg.get("To", ""),
+                    "date": mime_msg.get("Date", ""),
+                    "snippet": html.unescape(draft_msg.get("message", {}).get("snippet", "")),
+                })
 
             except Exception as e:
                 logger.error(f"Error fetching draft {draft.get('id')}: {str(e)}")
-                return None
-
-        # Process drafts concurrently with threading
-        def fetch_drafts_in_threads(drafts):
-            detailed_drafts = []
-
-            with ThreadPoolExecutor(max_workers=10) as executor:
-                futures = [
-                    executor.submit(_fetch_draft_details, draft) for draft in drafts
-                ]
-
-                for future in as_completed(futures):
-                    result = future.result()
-                    if result:
-                        detailed_drafts.append(result)
-
-            return detailed_drafts
-
-        detailed_drafts = fetch_drafts_in_threads(drafts_data)
+                continue
 
         return {
             "status": "success",
