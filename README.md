@@ -146,10 +146,10 @@ Server info page:
 ![Server info page](screenshots/1.png)
 
 Google oAuth page
-![Google oAuth page](screenshots/3.png)
+![Google oAuth page](screenshots/2.png)
 
 Google permission scopes page
-![Google psermission scopes page](screenshots/4.png)
+![Google psermission scopes page](screenshots3.png)
 
 User authenticated page
-![User Aunthenticated page](screenshots/5.png)
+![User Aunthenticated page](screenshots/4.png)
