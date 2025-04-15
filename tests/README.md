@@ -6,6 +6,7 @@
 
 ```
 TEST_TOKEN=Get a test token from authentication page
+TEST_EMAIL_RECIPIENT=Some email recipient
 ```
 
 2. Install `pytest` library:
