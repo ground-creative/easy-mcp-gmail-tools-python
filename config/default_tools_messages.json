@@ -1,73 +1,4 @@
 {
-<<<<<<< Updated upstream
-    "en": {
-      "gmail_archive_emails_tool": {
-        "request-start": "Archiving {{ params.message_ids }} Gmail message(s) with ID(s): {{ params.message_ids }}."
-      },
-      "gmail_create_draft_tool": {
-        "request-start": "Creating draft email{% if params.to %} to `{{ params.to }}`{% endif %} with subject `{{ params.subject }}` ({{ 'HTML' if params.is_html else 'plain text' }} content){% if params.cc %}, CC: {{ params.cc }}{% endif %}{% if params.bcc %}, BCC: {{ params.bcc }}{% endif %}."
-      },
-      "gmail_create_label_tool": {
-        "request-start": "Creating a new Gmail label named `{{ params.label_name }}`."
-      },
-      "gmail_reply_email_tool": {
-        "request-start": "Replying to email with message ID `{{ params.message_id }}` as {{ 'HTML' if params.is_html else 'plain text' }}{% if params.cc %}, CC: {{ params.cc }}{% endif %}{% if params.bcc %}, BCC: {{ params.bcc }}{% endif %}."
-      },
-      "gmail_reply_draft_tool": {
-        "request-start": "Creating a Gmail draft reply to message ID `{{ params.message_id }}`{% if params.to %} for recipient `{{ params.to }}`{% endif %}."
-      },
-      "gmail_delete_draft_tool": {
-        "request-start": "Attempting to delete draft with ID `{{ params.draft_id }}`{% if params.confirmation_token %}, using confirmation token `{{ params.confirmation_token }}`{% endif %}."
-      },
-      "gmail_delete_label_tool": {
-        "request-start": "Attempting to delete label with ID `{{ params.label_id }}`{% if params.confirmation_token %}, using confirmation token `{{ params.confirmation_token }}`{% endif %}."
-      },
-      "gmail_forward_email_tool": {
-        "request-start": "Forwarding email with ID `{{ params.message_id }}` to `{{ params.forward_to }}`{% if params.cc %}, CC: {{ params.cc }}{% endif %}{% if params.bcc %}, BCC: {{ params.bcc }}{% endif %}."
-      },
-      "gmail_get_thread_conversation_tool": {
-        "request-start": "Retrieving conversation for thread ID `{{ params.thread_id }}` in `{{ params.format or 'minimal' }}` format."
-      },
-      "gmail_get_draft_details_tool": {
-        "request-start": "Retrieving details for draft ID `{{ params.draft_id }}`{% if params.prefer_html %}, preferring HTML content{% endif %}."
-      },
-      "gmail_get_drafts_tool": {
-        "request-start": "Fetching drafts{% if params.query %} with query `{{ params.query }}`{% endif %}{% if params.label %}, label `{{ params.label }}`{% endif %}, max results `{{ params.max_results }}`, page token `{{ params.page_token }}`."
-      },
-      "gmail_get_emails_tool": {
-        "request-start": "Fetching Gmail messages{% if params.query %} matching query `{{ params.query }}`{% endif %}{% if params.label %}, with label `{{ params.label }}`{% endif %}{% if params.folder %}, from folder `{{ params.folder }}`{% endif %}{% if params.is_unread %}, that are unread{% endif %}{% if params.max_results %}, max `{{ params.max_results }}` results{% endif %}{% if params.page_token %}, page token `{{ params.page_token }}`{% endif %}."
-      },
-      "gmail_get_email_details_tool": {
-        "request-start": "Fetching Gmail message with ID `{{ params.message_id }}`{% if params.prefer_html %}, preferring HTML content{% endif %}."
-      },
-      "gmail_list_labels_tool": {
-        "request-start": "Fetching list of labels."
-      },
-      "gmail_manage_labels_tool": {
-        "request-start": "{% if params.action == 'remove' %}Removing{% else %}Adding{% endif %} labels `{{ params.labels }}` to emails `{{ params.message_ids }}`."
-      },
-      "gmail_mark_emails_tool": {
-        "request-start": "Marking emails `{{ params.message_ids }}` as {% if params.mark_as_read %}read{% else %}unread{% endif %}."
-      },
-      "gmail_move_emails_tool": {
-        "request-start": "Moving emails `{{ params.message_ids }}` to folder `{{ params.new_folder_label }}`."
-      },
-      "gmail_send_draft_tool": {
-        "request-start": "Sending draft with ID `{{ params.draft_id }}`."
-      },
-      "gmail_send_email_tool": {
-        "request-start": "Sending email to `{{ params.to }}` with subject `{{ params.subject }}` as {{ 'HTML' if params.is_html else 'plain text' }}{% if params.cc %}, CC: {{ params.cc }}{% endif %}{% if params.bcc %}, BCC: {{ params.bcc }}{% endif %}."
-      },
-      "gmail_set_emails_as_spam_tool": {
-        "request-start": "Modifying spam status for emails `{{ params.message_ids }}`. {% if params.mark_as_spam %}Marking as spam{% else %}Removing from spam{% if params.new_label %}, adding label `{{ params.new_label }}`{% endif %}{% endif %}."
-      },
-      "gmail_star_emails_tool": {
-        "request-start": "Modifying star status for emails `{{ params.message_ids }}`. {% if params.star_email is not none %}{{ 'Starring' if params.star_email else 'Unstarring' }} emails{% else %}No star action specified{% endif %}."
-      },
-      "gmail_update_draft_tool": {
-        "request-start": "Updating draft `{{ params.draft_id }}`.{% if params.to %} To: `{{ params.to }}`{% endif %}{% if params.subject %}, Subject: `{{ params.subject }}`{% endif %}{% if params.body %}, Body included{% endif %}{% if params.cc %}, CC: `{{ params.cc }}`{% endif %}{% if params.bcc %}, BCC: `{{ params.bcc }}`{% endif %}{% if params.is_html is not none %}, Format: {{ 'HTML' if params.is_html else 'plain text' }}{% endif %}."
-      }
-=======
   "en": {
     "gmail_archive_emails_tool": {
       "request-start": "Archiving {{ params.message_ids }} Gmail message(s) with ID(s): {{ params.message_ids }}."
@@ -134,7 +65,6 @@
     },
     "gmail_update_draft_tool": {
       "request-start": "Updating draft `{{ params.draft_id }}`.{% if params.to %} To: `{{ params.to }}`{% endif %}{% if params.subject %}, Subject: `{{ params.subject }}`{% endif %}{% if params.body %}, Body included{% endif %}{% if params.cc %}, CC: `{{ params.cc }}`{% endif %}{% if params.bcc %}, BCC: `{{ params.bcc }}`{% endif %}{% if params.is_html is not none %}, Format: {{ 'HTML' if params.is_html else 'plain text' }}{% endif %}."
->>>>>>> Stashed changes
     }
   }
 }
