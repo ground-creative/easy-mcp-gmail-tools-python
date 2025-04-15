@@ -75,13 +75,8 @@ def gmail_create_draft_tool(
         if is_html:
             msg_body_html = MIMEText(body, "html")
             message.attach(msg_body_html)
-<<<<<<< Updated upstream
-            # msg_body_plain = MIMEText(body, "plain")
-            # message.attach(msg_body_plain)
-=======
             #msg_body_plain = MIMEText(body, "plain")
             #message.attach(msg_body_plain)
->>>>>>> Stashed changes
         else:
             msg_body_plain = MIMEText(body, "plain")
             message.attach(msg_body_plain)
