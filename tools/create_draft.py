@@ -11,7 +11,6 @@ from core.utils.tools import doc_tag, doc_name
 import base64
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import re
 
 
 @doc_tag("Drafts")
@@ -76,8 +75,8 @@ def gmail_create_draft_tool(
         if is_html:
             msg_body_html = MIMEText(body, "html")
             message.attach(msg_body_html)
-            msg_body_plain = MIMEText(body, "plain")
-            message.attach(msg_body_plain)
+            # msg_body_plain = MIMEText(body, "plain")
+            # message.attach(msg_body_plain)
         else:
             msg_body_plain = MIMEText(body, "plain")
             message.attach(msg_body_plain)

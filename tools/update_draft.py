@@ -35,20 +35,6 @@ def gmail_update_draft_tool(
     """
     Modify an existing draft by updating the body, subject, and recipients.
     Keeps the previous values for any parameters that are not provided.
-
-    * Requires permission scope for Gmail.
-
-    Args:
-    - draft_id (str): The ID of the draft to modify.
-    - to (str, optional): The recipient's email address (optional).
-    - subject (str, optional): The subject of the email (optional).
-    - body (str, optional): The body content of the email (optional).
-    - cc (str, optional): CC recipients (optional).
-    - bcc (str, optional): BCC recipients (optional).
-    - is_html (bool, optional): If True, the body content is HTML (optional).
-
-    Returns:
-    - dict: Success or failure message along with updated draft details or error.
     """
     auth_response = check_access(True)
     if auth_response:
@@ -63,99 +49,58 @@ def gmail_update_draft_tool(
                 "error": f"Gmail permission scope not available, please add this scope here: {EnvConfig.get('APP_HOST')}/auth/login",
             }
 
-        # Fetch the existing draft to modify
+        # Fetch the existing draft
         draft = service.users().drafts().get(userId="me", id=draft_id).execute()
         message = draft["message"]
-        payload = message["payload"]
+        payload = message.get("payload", {})
+        headers = {h["name"]: h["value"] for h in payload.get("headers", [])}
 
-        # Use existing values if 'to' or 'subject' is not provided
-        if not to:
-            to = next(
-                (
-                    header["value"]
-                    for header in payload["headers"]
-                    if header["name"] == "To"
-                ),
-                "",
-            )
-        if not subject:
-            subject = next(
-                (
-                    header["value"]
-                    for header in payload["headers"]
-                    if header["name"] == "Subject"
-                ),
-                "",
-            )
+        # Extract original values
+        original_to = headers.get("To", "")
+        original_subject = headers.get("Subject", "")
+        original_cc = headers.get("Cc", "")
+        original_bcc = headers.get("Bcc", "")
+        original_body = ""
 
-        # Retain existing values for parameters not provided
-        # Modify the subject if provided
-        if subject:
-            payload["headers"] = [
-                header for header in payload["headers"] if header["name"] != "Subject"
-            ]
-            payload["headers"].append({"name": "Subject", "value": subject})
+        for part in payload.get("parts", []):
+            if part.get("mimeType") == "text/plain":
+                original_body = base64.urlsafe_b64decode(part["body"]["data"]).decode(
+                    "utf-8"
+                )
+                break
 
-        # Modify the recipient if provided
-        if to:
-            for header in payload["headers"]:
-                if header["name"] == "To":
-                    header["value"] = to
-                    break
-            else:
-                payload["headers"].append({"name": "To", "value": to})
+        # Use existing values if not provided
+        to = to or original_to
+        subject = subject or original_subject
+        cc = cc or original_cc
+        bcc = bcc or original_bcc
+        body = body or original_body or " "
 
-        # Modify the CC if provided
+        # Rebuild the MIME message
+        msg = MIMEMultipart("alternative")
+        msg["To"] = to
+        msg["Subject"] = subject
         if cc:
-            for header in payload["headers"]:
-                if header["name"] == "Cc":
-                    header["value"] = cc
-                    break
-            else:
-                payload["headers"].append({"name": "Cc", "value": cc})
-
-        # Modify the BCC if provided
+            msg["Cc"] = cc
         if bcc:
-            for header in payload["headers"]:
-                if header["name"] == "Bcc":
-                    header["value"] = bcc
-                    break
-            else:
-                payload["headers"].append({"name": "Bcc", "value": bcc})
+            msg["Bcc"] = bcc
 
-        # Rebuild the email message body (plain text or HTML) if body is provided
-        if body:
-            new_msg = MIMEMultipart("alternative")
-            new_msg["to"] = to if to else payload.get("To", "unknown@example.com")
-            new_msg["subject"] = (
-                subject if subject else payload.get("Subject", "No Subject")
-            )
-            if is_html is not None:
-                if is_html:
-                    msg_body_html = MIMEText(body, "html")
-                    new_msg.attach(msg_body_html)
-                else:
-                    msg_body_plain = MIMEText(body, "plain")
-                    new_msg.attach(msg_body_plain)
-            elif not is_html and body:
-                msg_body_plain = MIMEText(body, "plain")
-                new_msg.attach(msg_body_plain)
+        msg.attach(MIMEText(body, "html" if is_html else "plain"))
 
-            # Encode the new message in base64
-            raw_message = base64.urlsafe_b64encode(new_msg.as_bytes()).decode()
+        raw = base64.urlsafe_b64encode(msg.as_bytes()).decode("utf-8")
 
-            # Update the draft with the new message content
-            draft["message"]["raw"] = raw_message
-
-        # Update the draft
+        # Send updated raw message
         updated_draft = (
             service.users()
             .drafts()
-            .update(userId="me", id=draft_id, body=draft)
+            .update(
+                userId="me",
+                id=draft_id,
+                body={"message": {"raw": raw}},
+            )
             .execute()
         )
 
-        # Return the updated draft details
         return {
             "status": "success",
             "message": "Draft modified successfully.",
@@ -163,24 +108,21 @@ def gmail_update_draft_tool(
         }
 
     except HttpError as error:
-        error_message = error._get_reason()
-        error_details = error.resp
-        error_content = (
-            error.content.decode()
-            if hasattr(error.content, "decode")
-            else str(error.content)
+        logger.error(f"Google API error occurred: {error._get_reason()}")
+        logger.error(f"Error details: {error.resp}")
+        logger.error(
+            f"Error content: {error.content.decode() if hasattr(error.content, 'decode') else str(error.content)}"
         )
-
-        logger.error(f"Google API error occurred: {error_message}")
-        logger.error(f"Error details: {error_details}")
-        logger.error(f"Error content: {error_content}")
-
         return {
             "status": "error",
             "error": {
-                "message": error_message,
-                "details": error_details,
-                "content": error_content,
+                "message": error._get_reason(),
+                "details": error.resp,
+                "content": (
+                    error.content.decode()
+                    if hasattr(error.content, "decode")
+                    else str(error.content)
+                ),
             },
         }
 
