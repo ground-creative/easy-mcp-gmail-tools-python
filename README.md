@@ -117,9 +117,7 @@ The following tools are provided by this MCP server:
      - User support email
      - Developer contact info
    - Add necessary scopes:
-     - `https://www.googleapis.com/auth/drive`
-     - `https://www.googleapis.com/auth/documents`
-     - `https://www.googleapis.com/auth/spreadsheets`
+     - `https://mail.google.com/`
      - `openid`
    - Save and continue
 
